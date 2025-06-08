@@ -13,12 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: "zulu"
+
+      # ← NODE.JS STEPS START HERE ←
+      - name: Set up Node.js # ← Added
+        uses: actions/setup-node@v4 # ← Added
+        with: # ← Added
+          node-version: 22 # ← Added
+      - name: Install frontend dependencies # ← Added
+        working-directory: Frontend # ← Added
+        run: npm install # ← Added
+      - name: Build frontend # ← Added
+        working-directory: Frontend # ← Added
+        run: npm run build # ← Added
+      # ← NODE.JS STEPS END HERE ←
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
@@ -32,6 +46,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
+        working-directory: backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=baznancy_BudApp
