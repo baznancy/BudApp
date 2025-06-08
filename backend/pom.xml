@@ -26,9 +26,12 @@
         <tag/>
         <url/>
     </scm>
-    <properties>
-        <java.version>21</java.version>
-    </properties>
+<properties>
+    <java.version>21</java.version>
+    <sonar.organization>baznancy</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
+
     <dependencies>
 
         <dependency>
@@ -104,11 +107,7 @@
             <version>21.0</version>
         </dependency>
 
-        <properties>
-  <sonar.organization>baznancy</sonar.organization>
-  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-</properties>
-
+     
 
     </dependencies>
 
