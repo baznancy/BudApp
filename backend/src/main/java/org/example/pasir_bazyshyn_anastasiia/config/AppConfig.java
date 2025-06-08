@@ -1,7 +1,5 @@
 package org.example.pasir_bazyshyn_anastasiia.config;
 
-
-import org.example.pasir_bazyshyn_anastasiia.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

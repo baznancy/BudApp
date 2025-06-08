@@ -1,6 +1,5 @@
 package org.example.pasir_bazyshyn_anastasiia.service;
 
-
 import jakarta.persistence.EntityNotFoundException;
 import org.example.pasir_bazyshyn_anastasiia.dto.BalanceDto;
 import org.example.pasir_bazyshyn_anastasiia.dto.TransactionDTO;
@@ -19,9 +18,10 @@ import java.util.List;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, UserRepository userRepository1) {
+
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository) {
         this.transactionRepository = transactionRepository;
-        this.userRepository = userRepository1;
+        this.userRepository = userRepository;
     }
 
     public List<Transaction> getAllTransactions() {
@@ -30,13 +30,15 @@ public class TransactionService {
     }
 
     public Transaction getTransactionById(Long id) {
-        return transactionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Nie znaleziono transakcji o ID" + id));
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono transakcji o ID" + id));
     }
 
     public Transaction updateTransaction(Long id, TransactionDTO transactionDTO) {
-        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Nie znaleziono transakcji o ID" + id));
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono transakcji o ID" + id));
 
-        if(!transaction.getUser().getEmail().equals(getCurrentUser().getEmail())) {
+        if (!transaction.getUser().getEmail().equals(getCurrentUser().getEmail())) {
             throw new SecurityException("Brak dostępu do edycji tej transakcji");
         }
 
@@ -69,7 +71,8 @@ public class TransactionService {
 
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("nie znaleziono zalogowanego uzytkownilka"));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("nie znaleziono zalogowanego uzytkownilka"));
     }
 
     public BalanceDto getUserBalance(User user) {
@@ -85,7 +88,7 @@ public class TransactionService {
                 .mapToDouble(Transaction::getAmount)
                 .sum();
 
-        return  new BalanceDto(income, expense, income - expense);
+        return new BalanceDto(income, expense, income - expense);
     }
 
     /**
@@ -94,8 +97,7 @@ public class TransactionService {
     public List<Transaction> getUserTransactionsFiltered(
             LocalDateTime startDate,
             LocalDateTime endDate,
-            String type
-    ) {
+            String type) {
         User currentUser = getCurrentUser();
 
         if (startDate == null && endDate == null) {
@@ -103,8 +105,7 @@ public class TransactionService {
             if (type != null && !type.isEmpty()) {
                 return transactionRepository.findAllByUserAndType(
                         currentUser,
-                        TransactionType.valueOf(type)
-                );
+                        TransactionType.valueOf(type));
             } else {
                 return transactionRepository.findAllByUser(currentUser);
             }
@@ -118,14 +119,12 @@ public class TransactionService {
                         currentUser,
                         TransactionType.valueOf(type),
                         start,
-                        end
-                );
+                        end);
             } else {
                 return transactionRepository.findAllByUserAndTimestampBetween(
                         currentUser,
                         start,
-                        end
-                );
+                        end);
             }
         }
     }
@@ -157,6 +156,5 @@ public class TransactionService {
 
         return new BalanceDto(income, expense, income - expense);
     }
-
 
 }

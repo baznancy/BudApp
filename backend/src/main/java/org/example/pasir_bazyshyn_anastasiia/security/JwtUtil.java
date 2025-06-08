@@ -1,12 +1,9 @@
 package org.example.pasir_bazyshyn_anastasiia.security;
 
-
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.example.pasir_bazyshyn_anastasiia.dto.LoginDto;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -18,8 +15,7 @@ import java.util.Map;
 public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor(
-            "mojaMegaBezpiecznaTajnaSekretnaFrazaDojwtTokenow1234567890ABCDEF!@#".getBytes()
-    );
+            "mojaMegaBezpiecznaTajnaSekretnaFrazaDojwtTokenow1234567890ABCDEF!@#".getBytes());
 
     public String generateToken(org.example.pasir_bazyshyn_anastasiia.model.User user) {
         Map<String, Object> claims = new HashMap<>();
@@ -34,6 +30,7 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
+
     public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -50,8 +47,7 @@ public class JwtUtil {
         try {
             extractAllClaims(token);
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }

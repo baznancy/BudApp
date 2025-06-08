@@ -1,13 +1,11 @@
 package org.example.pasir_bazyshyn_anastasiia.controller;
 
-
 import jakarta.validation.Valid;
 import org.example.pasir_bazyshyn_anastasiia.dto.LoginDto;
 import org.example.pasir_bazyshyn_anastasiia.dto.UserDto;
 import org.example.pasir_bazyshyn_anastasiia.model.User;
 import org.example.pasir_bazyshyn_anastasiia.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,12 +32,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto dto) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginDto dto) {
         try {
             String token = userService.login(dto);
             return ResponseEntity.ok(Map.of("token", token));
         } catch (UsernameNotFoundException | BadCredentialsException ex) {
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
         }
     }
 }

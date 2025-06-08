@@ -20,7 +20,8 @@ public class MembershipService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
-    public MembershipService(MembershipRepository membershipRepository, GroupRepository groupRepository, UserRepository userRepository) {
+    public MembershipService(MembershipRepository membershipRepository, GroupRepository groupRepository,
+            UserRepository userRepository) {
         this.membershipRepository = membershipRepository;
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
@@ -32,15 +33,17 @@ public class MembershipService {
 
     public Membership addMember(MembershipDTO membershipDTO) {
         User user = userRepository.findByEmail(membershipDTO.getUserEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono użytkownika o emailu: " + membershipDTO.getUserEmail()));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Nie znaleziono użytkownika o emailu: " + membershipDTO.getUserEmail()));
 
         Group group = groupRepository.findById(membershipDTO.getGroupId())
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono grupy o id: " + membershipDTO.getGroupId()));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Nie znaleziono grupy o id: " + membershipDTO.getGroupId()));
 
         boolean alreadyMember = membershipRepository.findByGroupId(group.getId()).stream()
-                .anyMatch(membership -> membership.getUser().equals(user.getId()));
+                .anyMatch(membership -> membership.getUser().getId().equals(user.getId()));
 
-        if(alreadyMember) {
+        if (alreadyMember) {
             throw new IllegalStateException("Użytkownik jest już członkiem tej grupy");
         }
 
@@ -56,7 +59,7 @@ public class MembershipService {
         User currentUser = getCurrentUser();
         User groupOwner = membership.getGroup().getOwner();
 
-        if(!currentUser.getId().equals(groupOwner.getId())) {
+        if (!currentUser.getId().equals(groupOwner.getId())) {
             throw new SecurityException("Tylko wlasciciel grupy moze usuwac czllonkow ");
         }
 
@@ -66,6 +69,6 @@ public class MembershipService {
     public User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(()-> new EntityNotFoundException("Nie znaleziono uzytkownika: " + email));
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono uzytkownika: " + email));
     }
 }

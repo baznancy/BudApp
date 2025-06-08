@@ -9,7 +9,6 @@ import org.example.pasir_bazyshyn_anastasiia.service.TransactionService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -19,6 +18,7 @@ public class DebtGraphQLController {
 
     private final TransactionService transactionService;
     private DebtService debtService;
+
     public DebtGraphQLController(DebtService debtService, TransactionService transactionService) {
         this.debtService = debtService;
         this.transactionService = transactionService;
@@ -27,10 +27,11 @@ public class DebtGraphQLController {
     @QueryMapping
     public List<Debt> groupDebts(@Argument Long groupId) {
         return debtService.getGroupDebts(groupId).stream()
-                .peek(debt -> {
+                .map(debt -> {
                     if (debt.getTitle() == null) {
                         debt.setTitle("Brak opisu");
                     }
+                    return debt;
                 }).toList();
     }
 

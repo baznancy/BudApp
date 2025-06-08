@@ -1,9 +1,7 @@
 package org.example.pasir_bazyshyn_anastasiia.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

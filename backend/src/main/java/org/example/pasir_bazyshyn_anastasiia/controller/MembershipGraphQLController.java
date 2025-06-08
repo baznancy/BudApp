@@ -17,54 +17,53 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class MembershipGraphQLController {
-    private final MembershipService membershipService;
-    private final MembershipRepository membershipRepository;
-    private final GroupRepository groupRepository;
+        private final MembershipService membershipService;
+        private final MembershipRepository membershipRepository;
+        private final GroupRepository groupRepository;
 
-    public MembershipGraphQLController(MembershipService membershipService, MembershipRepository membershipRepository, GroupRepository groupRepository) {
-        this.membershipService = membershipService;
-        this.membershipRepository = membershipRepository;
-        this.groupRepository = groupRepository;
-    }
+        public MembershipGraphQLController(MembershipService membershipService,
+                        MembershipRepository membershipRepository, GroupRepository groupRepository) {
+                this.membershipService = membershipService;
+                this.membershipRepository = membershipRepository;
+                this.groupRepository = groupRepository;
+        }
 
-    @QueryMapping
-    public List<MembershipResponseDTO> groupMembers(@Argument Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("Nie znaleźono grupy o ID: " + groupId));
+        @QueryMapping
+        public List<MembershipResponseDTO> groupMembers(@Argument Long groupId) {
+                Group group = groupRepository.findById(groupId)
+                                .orElseThrow(() -> new EntityNotFoundException("Nie znaleźono grupy o ID: " + groupId));
 
-        return membershipRepository.findByGroupId(group.getId()).stream()
-                .map(membership -> new MembershipResponseDTO(
-                        membership.getId(),
-                        membership.getUser().getId(),
-                        membership.getGroup().getId(),
-                        membership.getUser().getEmail()
-                )).toList();
-    }
+                return membershipRepository.findByGroupId(group.getId()).stream()
+                                .map(membership -> new MembershipResponseDTO(
+                                                membership.getId(),
+                                                membership.getUser().getId(),
+                                                membership.getGroup().getId(),
+                                                membership.getUser().getEmail()))
+                                .toList();
+        }
 
-    @MutationMapping
-    public MembershipResponseDTO addMember(@Valid @Argument MembershipDTO membershipDTO) {
-        Membership membership = membershipService.addMember(membershipDTO);
-        return new MembershipResponseDTO(
-                membership.getId(),
-                membership.getUser().getId(),
-                membership.getGroup().getId(),
-                membership.getUser().getEmail()
-        );
-    }
+        @MutationMapping
+        public MembershipResponseDTO addMember(@Valid @Argument MembershipDTO membershipDTO) {
+                Membership membership = membershipService.addMember(membershipDTO);
+                return new MembershipResponseDTO(
+                                membership.getId(),
+                                membership.getUser().getId(),
+                                membership.getGroup().getId(),
+                                membership.getUser().getEmail());
+        }
 
-    @QueryMapping
-    public List<GroupResponseDTO> myGroups() {
-        User user = membershipService.getCurrentUser();
-        return groupRepository.findByMemberships_User(user).stream()
-                .map(group -> new GroupResponseDTO(
-                        group.getId(),
-                        group.getName(),
-                        group.getOwner().getId()
-                )).toList();
+        @QueryMapping
+        public List<GroupResponseDTO> myGroups() {
+                User user = membershipService.getCurrentUser();
+                return groupRepository.findByMemberships_User(user).stream()
+                                .map(group -> new GroupResponseDTO(
+                                                group.getId(),
+                                                group.getName(),
+                                                group.getOwner().getId()))
+                                .toList();
 
-    }
+        }
 }
