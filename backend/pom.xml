@@ -104,6 +104,11 @@
             <version>21.0</version>
         </dependency>
 
+        <properties>
+  <sonar.organization>baznancy</sonar.organization>
+  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+</properties>
+
 
     </dependencies>
 

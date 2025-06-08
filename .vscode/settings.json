@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "baznancy",
+        "projectKey": "baznancy_BudApp"
+    }
+}
